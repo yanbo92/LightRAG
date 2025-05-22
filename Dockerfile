@@ -39,7 +39,9 @@ COPY ./lightrag ./lightrag
 COPY setup.py .
 
 # Copy static files for Swagger UI
-COPY ./lightrag/api/static/swagger-ui-dist/ ./lightrag/api/static/swagger-ui-dist/
+COPY ./lightrag/api/static/swagger-ui-dist/swagger-ui.css ./lightrag/api/static/swagger-ui-dist/swagger-ui.css
+COPY ./lightrag/api/static/swagger-ui-dist/swagger-ui-bundle.js ./lightrag/api/static/swagger-ui-dist/swagger-ui-bundle.js
+COPY ./lightrag/api/static/swagger-ui-dist/swagger-ui-standalone-preset.js ./lightrag/api/static/swagger-ui-dist/swagger-ui-standalone-preset.js
 COPY ./lightrag/api/static/swagger-ui.html ./lightrag/api/static/swagger-ui.html
 
 RUN pip install ".[api]"

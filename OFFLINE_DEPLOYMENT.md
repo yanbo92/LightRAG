@@ -10,9 +10,35 @@ By default, LightRAG's Swagger UI interface loads CSS and JavaScript files from 
 
 We've modified the application to use local static files for Swagger UI instead of loading them from CDN. The modified Docker image includes:
 
-1. Local copies of `swagger-ui.css` and `swagger-ui-bundle.js`
+1. Local copies of Swagger UI files (`swagger-ui.css`, `swagger-ui-bundle.js`, and `swagger-ui-standalone-preset.js`)
 2. A custom Swagger UI HTML template
 3. Configuration to serve these files from the `/static` endpoint
+
+## Manual Download Instructions
+
+If you need to download the Swagger UI files manually:
+
+1. Create the directory structure:
+   ```bash
+   mkdir -p lightrag/api/static/swagger-ui-dist
+   ```
+
+2. Download the required files:
+   ```bash
+   # Download CSS file
+   curl -L https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css -o lightrag/api/static/swagger-ui-dist/swagger-ui.css
+   
+   # Download main JavaScript bundle
+   curl -L https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js -o lightrag/api/static/swagger-ui-dist/swagger-ui-bundle.js
+   
+   # Download standalone preset JavaScript
+   curl -L https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-standalone-preset.js -o lightrag/api/static/swagger-ui-dist/swagger-ui-standalone-preset.js
+   ```
+
+3. Verify the files are downloaded correctly:
+   ```bash
+   ls -la lightrag/api/static/swagger-ui-dist/
+   ```
 
 ## Building the Docker Image
 
