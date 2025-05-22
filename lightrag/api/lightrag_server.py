@@ -10,7 +10,7 @@ import logging.config
 import uvicorn
 import pipmaster as pm
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from pathlib import Path
 import configparser
 from ascii_colors import ASCIIColors
@@ -161,7 +161,7 @@ def create_app(args):
         else "",
         "version": __api_version__,
         "openapi_url": "/openapi.json",  # Explicitly set OpenAPI schema URL
-        "docs_url": "/docs",  # Explicitly set docs URL
+        "docs_url": None,  # Disable default docs URL, we'll use custom route
         "redoc_url": "/redoc",  # Explicitly set redoc URL
         "lifespan": lifespan,
     }
@@ -368,6 +368,19 @@ def create_app(args):
         """Redirect root path to /webui"""
         return RedirectResponse(url="/webui")
 
+    @app.get("/docs", include_in_schema=False)
+    async def custom_swagger_ui_html():
+        """Custom Swagger UI HTML that uses local static files"""
+        static_dir = Path(__file__).parent / "static"
+        swagger_ui_path = static_dir / "swagger-ui.html"
+        
+        if swagger_ui_path.exists():
+            with open(swagger_ui_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+            return HTMLResponse(content=html_content)
+        else:
+            return HTMLResponse(content="Swagger UI template not found", status_code=404)
+
     @app.get("/auth-status")
     async def get_auth_status():
         """Get authentication status and guest token if auth is not configured"""
@@ -514,6 +527,17 @@ def create_app(args):
             directory=static_dir, html=True, check_dir=True
         ),  # Use SmartStaticFiles
         name="webui",
+    )
+
+    # Mount static files directory for Swagger UI
+    static_files_dir = Path(__file__).parent / "static"
+    static_files_dir.mkdir(exist_ok=True)
+    app.mount(
+        "/static",
+        SmartStaticFiles(
+            directory=static_files_dir, html=False, check_dir=True
+        ),
+        name="static",
     )
 
     return app

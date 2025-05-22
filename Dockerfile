@@ -38,6 +38,10 @@ COPY --from=builder /root/.local /root/.local
 COPY ./lightrag ./lightrag
 COPY setup.py .
 
+# Copy static files for Swagger UI
+COPY ./lightrag/api/static/swagger-ui-dist/ ./lightrag/api/static/swagger-ui-dist/
+COPY ./lightrag/api/static/swagger-ui.html ./lightrag/api/static/swagger-ui.html
+
 RUN pip install ".[api]"
 # Make sure scripts in .local are usable
 ENV PATH=/root/.local/bin:$PATH
